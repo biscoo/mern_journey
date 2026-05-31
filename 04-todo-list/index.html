@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="text" id="input-item" />
+    <button id="add" onclick="addItem()">Add</button>
+    <button id="clear-list" onclick="clearList()">Clear</button>
+    <ul id="todo-list"></ul>
+
+    <script>
+      // always define the array first
+      // if nothing is saved yet, we start with an empty array
+      let todo = [];
+
+      // check if the browser has saved data from a previous session
+      let saved = localStorage.getItem("todos");
+
+      // if saved data exists (not null)...
+      if (saved) {
+        // convert the string back to an array and overwrite todo
+        todo = JSON.parse(saved);
+        // draw the saved items on screen immediately
+        render();
+      }
+
+      // wipes the screen and redraws everything from the array
+      function render() {
+        let list = document.querySelector("#todo-list");
+
+        // wipe the screen
+        list.innerHTML = "";
+
+        // loop through every item — task is the text, index is the position
+        todo.forEach(function (task, index) {
+          // create a new <li> in memory
+          let li = document.createElement("li");
+          li.textContent = task;
+          li.onclick = function () {
+            let field = document.createElement("input");
+            li.innerHTML = "";
+            field.value = task;
+            field.onkeydown = function (event) {
+              if (event.key === "Enter") {
+                // update the array with the new text
+                todo[index] = field.value;
+                // redraw the screen
+                render();
+                // save the updated array to localStorage
+                localStorage.setItem("todos", JSON.stringify(todo));
+              }
+            };
+            li.appendChild(field);
+            field.focus();
+          };
+
+          // create a delete button for this specific item
+          let btn = document.createElement("button");
+          btn.textContent = "Delete";
+
+          btn.onclick = function () {
+            // remove this item from the array
+            todo.splice(index, 1);
+            // redraw the screen
+            render();
+            // save the updated array to localStorage
+            localStorage.setItem("todos", JSON.stringify(todo));
+          };
+
+          li.appendChild(btn);
+          list.appendChild(li);
+        });
+      }
+
+      function addItem() {
+        let item = document.querySelector("#input-item");
+
+        // add the typed text to the array
+        todo.push(item.value);
+
+        // clear the input box
+        item.value = "";
+
+        // redraw the screen
+        render();
+
+        // save the updated array to localStorage
+        // JSON.stringify converts the array to a string — localStorage only accepts strings
+        localStorage.setItem("todos", JSON.stringify(todo));
+      }
+
+      function clearList() {
+        // reset the array to empty
+        todo = [];
+
+        // redraw — loop runs 0 times so screen becomes empty
+        render();
+
+        // save the empty array to localStorage
+        // next time the page loads, saved will be "[]" so todo stays empty
+        localStorage.setItem("todos", JSON.stringify(todo));
+      }
+    </script>
+  </body>
+</html>

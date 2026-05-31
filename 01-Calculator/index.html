@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <input type="text" id="num1" />
+      <input type="text" id="num2" />
+      <button id="Add" onclick="calc('+')">+</button>
+      <button id="Sub" onclick="calc('-')">-</button>
+      <button id="Mul" onclick="calc('*')">x</button>
+      <button id="Div" onclick="calc('/')">/</button>
+      <p id="result"></p>
+    </div>
+
+    <script>
+      function calc(text) {
+        let n1 = Number(document.querySelector("#num1").value);
+        let n2 = Number(document.querySelector("#num2").value);
+        /*   let op ={
+            "+":n1+n2 ,
+            "-":n1-n2 ,
+            "*":n1*n2 ,
+            "/":n1/n2
+        } */
+        let result = document.querySelector("#result");
+        if (text == "+") {
+          result.textContent = n1 + n2;
+        } else if (text == "-") {
+          result.textContent = n1 - n2;
+        } else if (text == "*") {
+          result.textContent = n1 * n2;
+        } else if (text == "/") {
+          if (n2 == 0) {
+            result.textContent = "Undifined Value, Second number must be > 0";
+          } else {
+            result.textContent = n1 / n2;
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
