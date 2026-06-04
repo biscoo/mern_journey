@@ -7,6 +7,8 @@ const mongoose = require("mongoose");
 
 // create the app
 const app = express();
+// allows Express to read JSON data sent in request body
+app.use(express.json());
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -17,21 +19,33 @@ mongoose
     console.log("Connection failed:", error);
   });
 
-// create a new user
-app.get("/users/create", async function (req, res) {
+// GET all users
+app.get("/users", async function (req, res) {
+  let users = await User.find();
+  res.json(users);
+});
+
+// GET one user by id
+app.get("/users/:id", async function (req, res) {
+  let user = await User.findById(req.params.id);
+  res.json(user);
+});
+
+// POST — create a new user
+app.post("/users", async function (req, res) {
   let user = new User({
-    name: "Beshoy",
-    email: "beshoy@email.com",
-    age: 25,
+    name: req.body.name,
+    email: req.body.email,
+    age: req.body.age,
   });
   await user.save();
   res.json({ message: "User created", user: user });
 });
 
-// get all users
-app.get("/users", async function (req, res) {
-  let users = await User.find();
-  res.json(users);
+// DELETE — remove a user by id
+app.delete("/users/:id", async function (req, res) {
+  await User.findByIdAndDelete(req.params.id);
+  res.json({ message: "User deleted" });
 });
 
 // start the server on port 3000
