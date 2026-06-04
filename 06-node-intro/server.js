@@ -1,33 +1,37 @@
 // import Express — like querySelector but for server packages
+require("dotenv").config();
+
+const User = require("./User");
 const express = require("express");
+const mongoose = require("mongoose");
 
 // create the app
 const app = express();
 
-// define a route — when someone visits "/" send back "Hello World"
-app.get("/", function (req, res) {
-  res.send("Hello World - testing npm start2");
-});
-app.get("/about", function (req, res) {
-  res.send("This is the about page");
-});
-app.get("/user", function (req, res) {
-  res.json({
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(function () {
+    console.log("Connected to MongoDB");
+  })
+  .catch(function (error) {
+    console.log("Connection failed:", error);
+  });
+
+// create a new user
+app.get("/users/create", async function (req, res) {
+  let user = new User({
     name: "Beshoy",
+    email: "beshoy@email.com",
     age: 25,
-    role: "developer",
   });
+  await user.save();
+  res.json({ message: "User created", user: user });
 });
 
-app.get("/user/:name", function (req, res) {
-  // :name is a parameter — whatever the user types in the URL
-  // Express captures it and puts it in req.params
-  let name = req.params.name;
-
-  res.json({
-    name: name,
-    message: "Hello " + name,
-  });
+// get all users
+app.get("/users", async function (req, res) {
+  let users = await User.find();
+  res.json(users);
 });
 
 // start the server on port 3000
