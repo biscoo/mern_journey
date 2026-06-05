@@ -1,8 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState("");
+  const [user, setUser] = useState([]);
+  useEffect(function () {
+    async function loadUsers() {
+      let url = "http://localhost:3000/users";
+      let response = await fetch(url);
+      let data = await response.json();
+      setUser(data);
+    }
+    loadUsers();
+  }, []);
 
   function addTodo() {
     if (input === "") return;
@@ -23,6 +33,16 @@ function App() {
             <li key={index}>
               {task}
               <button onClick={() => deleteTodo(index)}>Delete</button>
+            </li>
+          );
+        })}
+      </ul>
+      <h2>Users from database</h2>
+      <ul>
+        {user.map(function (u, index) {
+          return (
+            <li key={index}>
+              {u.name} - {u.email}
             </li>
           );
         })}
