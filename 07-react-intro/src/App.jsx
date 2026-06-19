@@ -1,6 +1,7 @@
-import About from "./About";
+import NewNote from "./pages/NewNote";
+import NoteDetail from "./pages/NoteDetail";
 import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
-import Home from "./Home";
+import Home from "./pages/Home";
 
 function App() {
   return (
@@ -11,11 +12,14 @@ function App() {
         <div>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
+            <Route path="/notes/:id" element={<NoteDetail />} />
+            <Route path="/notes/new" element={<NewNote />} />
           </Routes>
           <Link to="/">Home</Link>
           <br />
-          <Link to="/about">About</Link>
+          <Link to="/notes/new">New Note</Link>
+          <br />
+          <Link to="/notes/1">Note Detail</Link>
         </div>
       </div>
     </BrowserRouter>
