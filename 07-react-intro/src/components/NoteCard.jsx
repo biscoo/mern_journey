@@ -1,7 +1,12 @@
 import { useState } from "react";
 
-function NoteCard() {
-  return <div>Note Card</div>;
+function NoteCard({ data }) {
+  return (
+    <div>
+      <p>{data.title}</p>
+      <p>{data.content}</p>
+    </div>
+  );
 }
 
 export default NoteCard;
