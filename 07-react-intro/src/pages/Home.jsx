@@ -9,23 +9,25 @@ function Home() {
   // starts as true because we haven't fetched anything yet
   const [loading, setLoading] = useState(true);
 
+  async function loadNotes() {
+    // send a GET request to our Express backend
+    const response = await fetch("http://localhost:3000/notes");
+
+    // convert the raw response into a usable JS array
+    const data = await response.json();
+
+    // store the fetched notes in state — triggers a re-render
+    setNotes(data);
+
+    // mark loading as finished so the real content can render
+    setLoading(false);
+  }
+
   // useEffect with [] runs once, when the component first mounts (page loads)
   useEffect(() => {
     // async function needed because fetch requires await,
     // and useEffect's callback itself can't be async directly
-    async function loadNotes() {
-      // send a GET request to our Express backend
-      const response = await fetch("http://localhost:3000/notes");
-
-      // convert the raw response into a usable JS array
-      const data = await response.json();
-
-      // store the fetched notes in state — triggers a re-render
-      setNotes(data);
-
-      // mark loading as finished so the real content can render
-      setLoading(false);
-    }
+    loadNotes();
 
     // actually call the function — defining it alone doesn't run it
     loadNotes();
@@ -37,6 +39,15 @@ function Home() {
     return <p>Loading...</p>;
   }
 
+  async function deleteNote(id) {
+    const deleted = await fetch(`http://localhost:3000/notes/${id}`, {
+      method: "DELETE",
+    });
+    if (deleted.ok) {
+      loadNotes();
+    }
+  }
+
   // once loading is false, render the actual list of notes
   return (
     <div>
@@ -45,7 +56,12 @@ function Home() {
         {notes.map((note) => {
           // NoteCard receives the note object as a prop named "data"
           // key is required by React to track each item in the list efficiently
-          return <NoteCard key={note._id} data={note} />;
+          return (
+            <div key={note._id}>
+              <NoteCard data={note} />
+              <button onClick={() => deleteNote(note._id)}>Delete</button>
+            </div>
+          );
         })}
       </ul>
     </div>

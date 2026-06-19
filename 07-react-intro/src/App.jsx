@@ -7,7 +7,7 @@ function App() {
   return (
     <BrowserRouter>
       <div>
-        <h1>Welcome to the React Routing App</h1>
+        <h1>Welcome to the Notes App</h1>
 
         <div>
           <Routes>
